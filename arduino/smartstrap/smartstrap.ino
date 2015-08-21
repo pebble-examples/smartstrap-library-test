@@ -18,22 +18,22 @@ void setup() {
 
 void loop() {
   size_t length;
-  bool is_read;
+  RequestType type;
   uint16_t service_id;
   uint16_t attribute_id;
   
   // Check to see if a frame was received, and for which service and attribute
-  if(ArduinoPebbleSerial::feed(&service_id, &attribute_id, &length, &is_read)) {
+  if(ArduinoPebbleSerial::feed(&service_id, &attribute_id, &length, &type)) {
     // We got a frame!
     if((service_id == 0) && (attribute_id == 0)) {
       // This is a raw data service frame
 
-      if(is_read) {
+      if(type == RequestTypeRead || type == RequestTypeWriteRead) {
         // Write the data to send
         snprintf((char*)s_data_buffer, sizeof(s_data_buffer), "Hello, Pebble!");
     
         // Send the data
-        ArduinoPebbleSerial::write(s_service_ids[0], s_attr_ids[0], true, s_data_buffer, strlen((char*)s_data_buffer)+1);
+        ArduinoPebbleSerial::write(true, s_data_buffer, strlen((char*)s_data_buffer)+1);
       }
     }
   }
