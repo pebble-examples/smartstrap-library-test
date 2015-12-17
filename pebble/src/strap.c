@@ -65,16 +65,21 @@ void strap_request_data() {
   // Declare a buffer to be used
   size_t buff_size;
   uint8_t *buffer;
+  SmartstrapResult result;
 
   // Begin the write request, getting the buffer and its length
-  smartstrap_attribute_begin_write(attribute, &buffer, &buff_size);
+  result = smartstrap_attribute_begin_write(attribute, &buffer, &buff_size);
+  if (result != SmartstrapResultOk) {
+    APP_LOG(APP_LOG_LEVEL_ERROR, "Begin write failed with error %d", result);
+    return;
+  }
 
   // Store the data to be written to this attribute
   snprintf((char*)buffer, buff_size, "Hello, smartstrap!");
 
   // End the write request, and send the data, expecting a response
-  SmartstrapResult r = smartstrap_attribute_end_write(attribute, strlen((char*)buffer), true);
-  if(r != SmartstrapResultOk) {
-    APP_LOG(APP_LOG_LEVEL_ERROR, "Smartstrap error: %s", smartstrap_result_to_string(r));
+  result = smartstrap_attribute_end_write(attribute, strlen((char*)buffer), true);
+  if(result != SmartstrapResultOk) {
+    APP_LOG(APP_LOG_LEVEL_ERROR, "Smartstrap error: %s", smartstrap_result_to_string(result));
   }
 }
